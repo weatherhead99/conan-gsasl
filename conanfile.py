@@ -4,15 +4,13 @@ import os
 class GsaslConan(ConanFile):
     name = "gsasl"
     version = "1.8.1"
-    license = "<Put the package license here>"
-    author = "<Put your name here> <And your email here>"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of Gsasl here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    license = "GPL-3.0"
+    author = "Dan Weatherill dan.weatherill@cantab.net"
+    url = "https://github.com/weatherhead99/conan-gsasl"
+    description = "GNU Simple Authentication and Security Layer"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    generators = "cmake"
     requires = ("libiconv/[>=1.15]@bincrafters/stable",
                 "readline/[>=7.0]@bincrafters/stable")
 
@@ -28,7 +26,9 @@ class GsaslConan(ConanFile):
         os.chdir(self.source_folder)
         self.run("make bootstrap")
         autotools = AutoToolsBuildEnvironment(self)
-        atargs = ["--disable-obsolete"]
+        atargs = ["--disable-obsolete",
+                  "--with-packager weatherhead99",
+                  "--with-package-version 1.8.1-conan0"]
         if self.options.shared:
             atargs.extend(["--enable-static=no"])
         else:
@@ -46,5 +46,5 @@ class GsaslConan(ConanFile):
         tools.rmdir("share/man")
 
     def package_info(self):
-        pass
+        self.cpp_info.libs = tools.collect_libs(self)
 
